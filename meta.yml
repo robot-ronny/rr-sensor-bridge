@@ -1,10 +1,6 @@
-article: https://www.bigclown.com/doc/projects/radio-soil-sensor/
-video: https://www.youtube.com/watch?v=6kU-_ldaGOw&feature=youtu.be
-images:
-  - title:
-    url: https://www.bigclown.com/doc/projects/radio-soil-sensor/project-image.png
+description: Gateway firmware for Radio USB Dongle.
 assembly:
-  - name: BigClown Soil Sensor
+  - name: BigClown USB Dongle
   - name: BigClown Core Module
-  - name: BigClown Sensor Module
-  - name: BigClown Battery Module
+    optional: true
+ 

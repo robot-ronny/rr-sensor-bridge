@@ -2,8 +2,7 @@
 #include <radio.h>
 #include <usb_talk.h>
 #include <eeprom.h>
-#define CORE_MODULE 1
-#if CORE_MODULE
+#if 1
 #include <sensors.h>
 #endif
 
@@ -14,7 +13,7 @@ static bc_led_t led;
 static bool led_state;
 static bool radio_pairing_mode;
 
-#if CORE_MODULE
+#if 1
 static struct
 {
     bc_tick_t next_update;
@@ -109,7 +108,7 @@ void application_init(void)
 
     eeprom_init();
 
-#if CORE_MODULE
+#if 1
     bc_module_power_init();
 
     memset(&lcd, 0, sizeof(lcd));
@@ -455,7 +454,7 @@ static void module_relay_state_set(uint64_t *id, usb_talk_payload_t *payload, us
     {
         bc_radio_node_state_set(id, sub->number == 0 ? BC_RADIO_NODE_STATE_RELAY_MODULE_0 : BC_RADIO_NODE_STATE_RELAY_MODULE_1, &state);
     }
-#if CORE_MODULE
+#if 1
     else
     {
         bc_module_relay_set_state(sub->number == 0 ? &relay_0_0 : &relay_0_1, state);
@@ -491,7 +490,7 @@ static void module_relay_pulse(uint64_t *id, usb_talk_payload_t *payload, usb_ta
 
         bc_radio_pub_buffer(buffer, sizeof(buffer));
     }
-#if CORE_MODULE
+#if 1
     else
     {
         bc_module_relay_pulse(sub->number == 0 ? &relay_0_0 : &relay_0_1, direction, duration);
@@ -507,7 +506,7 @@ static void module_relay_state_get(uint64_t *id, usb_talk_payload_t *payload, us
     {
         bc_radio_node_state_get(id, sub->number == 0 ? BC_RADIO_NODE_STATE_RELAY_MODULE_0 : BC_RADIO_NODE_STATE_RELAY_MODULE_1);
     }
-#if CORE_MODULE
+#if 1
     else
     {
         bc_module_relay_state_t state = bc_module_relay_get_state(sub->number == 0 ? &relay_0_0 : &relay_0_1);
@@ -554,7 +553,7 @@ static void lcd_text_set(uint64_t *id, usb_talk_payload_t *payload, usb_talk_sub
 
     if (my_id == *id)
     {
-#if CORE_MODULE
+#if 1
         if (!lcd.mqtt)
         {
             bc_module_lcd_clear();
@@ -631,7 +630,7 @@ static void lcd_screen_clear(uint64_t *id, usb_talk_payload_t *payload, usb_talk
         memcpy(buffer + 1, id, sizeof(uint64_t));
         bc_radio_pub_buffer(buffer, sizeof(buffer));
     }
-#if CORE_MODULE
+#if 1
     else
     {
         bc_module_lcd_clear();
@@ -1043,7 +1042,7 @@ static void radio_sub_callback(uint64_t *id, usb_talk_payload_t *payload, usb_ta
     bc_radio_send_sub_data(id, sub->number, value, value_size);
 }
 
-#if CORE_MODULE
+#if 1
 void application_task(void)
 {
     bc_tick_t now = bc_tick_get();

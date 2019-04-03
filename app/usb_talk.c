@@ -5,8 +5,6 @@
 #include <bc_base64.h>
 #include <application.h>
 
-#define TALK_OVER_CDC 0
-
 #define USB_TALK_MAX_TOKENS 100
 
 #define USB_TALK_TOKEN_ARRAY         0
@@ -32,7 +30,7 @@ static struct
 
     bool read_start;
 
-#if TALK_OVER_CDC
+#if 1
 #else
     uint8_t read_fifo_buffer[1024];
     bc_fifo_t read_fifo;
@@ -42,7 +40,7 @@ static struct
 
 } _usb_talk;
 
-#if TALK_OVER_CDC
+#if 1
 static void _usb_talk_cdc_read_task(void *param);
 #else
 static void _usb_talk_uart_event_handler(bc_uart_channel_t channel, bc_uart_event_t event, void  *event_param);
@@ -60,7 +58,7 @@ void usb_talk_init(void)
 {
     memset(&_usb_talk, 0, sizeof(_usb_talk));
 
-#if TALK_OVER_CDC
+#if 1
     bc_usb_cdc_init();
 #else
     bc_fifo_init(&_usb_talk.read_fifo, _usb_talk.read_fifo_buffer, sizeof(_usb_talk.read_fifo_buffer));
@@ -122,7 +120,7 @@ bool usb_talk_add_sub(const char *topic, usb_talk_sub_callback_t callback, uint8
 
 void usb_talk_send_string(const char *buffer)
 {
-#if TALK_OVER_CDC
+#if 1
     bc_usb_cdc_write(buffer, strlen(buffer));
 #else
     bc_uart_async_write(BC_UART_UART2, buffer, strlen(buffer));
@@ -138,7 +136,7 @@ void usb_talk_send_format(const char *format, ...)
     length = vsnprintf(_usb_talk.tx_buffer, sizeof(_usb_talk.tx_buffer), format, ap);
     va_end(ap);
 
-#if TALK_OVER_CDC
+#if 1
     bc_usb_cdc_write(_usb_talk.tx_buffer, length);
 #else
     bc_uart_async_write(BC_UART_UART2, _usb_talk.tx_buffer, length);
@@ -215,7 +213,7 @@ void usb_talk_message_send(void)
 
     _usb_talk.tx_length += 2;
 
-#if TALK_OVER_CDC
+#if 1
     bc_usb_cdc_write(_usb_talk.tx_buffer, _usb_talk.tx_length);
 #else
     bc_uart_async_write(BC_UART_UART2, _usb_talk.tx_buffer, _usb_talk.tx_length);
@@ -486,7 +484,7 @@ void usb_talk_publish_nodes(uint64_t *peer_devices_address, int lenght)
     usb_talk_send_string((const char *) _usb_talk.tx_buffer);
 }
 
-#if TALK_OVER_CDC
+#if 1
 static void _usb_talk_cdc_read_task(void *param)
 {
     (void) param;
@@ -548,7 +546,7 @@ void _usb_talk_read_start(void)
 
     if (((_usb_talk.subscribes != NULL) && (_usb_talk.subscribes_length > 0)) || ((_usb_talk.subs != NULL) && (_usb_talk.subs_length > 0)))
     {
-#if TALK_OVER_CDC
+#if 1
         bc_scheduler_register(_usb_talk_cdc_read_task, NULL, 0);
 #else
         bc_uart_set_event_handler(BC_UART_UART2, _usb_talk_uart_event_handler, NULL);
